@@ -2,6 +2,7 @@ package com.galvanize.gmdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.gmdb.exception.GmdbMissingStarException;
 import com.galvanize.gmdb.model.Movie;
 import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.repository.GmdbRepository;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -39,11 +41,13 @@ public class GmdbControllerIT {
     GmdbRepository gmdbRepository;
 
     private List<Movie> allMovies;
+    private ObjectMapper mapper;
 
     @BeforeEach
     public void setUp() throws IOException {
         gmdbRepository.deleteAll();
         allMovies = MovieTestUtil.moviesContent();
+        mapper = new ObjectMapper();
     }
 
     @Test
@@ -91,8 +95,6 @@ public class GmdbControllerIT {
 
         Rating newRating = new Rating(4, "Terrible");
 
-        ObjectMapper mapper = new ObjectMapper();
-
         mockMvc.perform(put("/api/movies/{title}", "Superman Returns")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(newRating)))
@@ -111,8 +113,6 @@ public class GmdbControllerIT {
 
         Rating newRating = new Rating(4, "Terrible");
 
-        ObjectMapper mapper = new ObjectMapper();
-
         mockMvc.perform(put("/api/movies/{title}", "Superman Returns")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(newRating)))
@@ -120,4 +120,14 @@ public class GmdbControllerIT {
                 .andExpect(content().string(containsString("Terrible")));
     }
 
+    @Test
+    public void test_PostReview_throwException_withoutStar() throws Exception {
+        Rating rating = new Rating(null, "Great movie");
+
+        mockMvc.perform(put("/api/movies/{title}", "Superman Returns")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(rating)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMsg").value("Please enter star for your rating."));
+    }
 }

@@ -1,5 +1,6 @@
 package com.galvanize.gmdb.service;
 
+import com.galvanize.gmdb.exception.GmdbMissingStarException;
 import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import com.galvanize.gmdb.model.Movie;
 import com.galvanize.gmdb.model.Rating;
@@ -98,6 +99,16 @@ public class GmdbServiceTest {
 		assertEquals(2 ,
 				updatedMovie.getRating().size());
 		assertEquals(4, updatedMovie.getAverageRating());
+	}
+
+	@Test
+	public void test_postRating_throwException_withoutStar() {
+
+		GmdbMissingStarException exception =
+				assertThrows(GmdbMissingStarException.class,
+					() -> gmdbService.postRating("SuperMan Returns",
+												new Rating(null, "Awesome")));
+		assertEquals("Please enter star for your rating.", exception.getErrorMsg());
 	}
 
 }

@@ -2,6 +2,7 @@ package com.galvanize.gmdb.service;
 
 import java.util.List;
 
+import com.galvanize.gmdb.exception.GmdbMissingStarException;
 import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,14 @@ public class GmdbService {
 		return gmdbRepository.findById(title)
 				.orElseThrow(() -> new GmdbNotFoundException(title + " doesn't exist"));
     }
-	public Movie postRating(String title, Rating requestDTO) {
+	public Movie postRating(String title, Rating rating) {
+		if (rating.getStar() == null )
+			throw new GmdbMissingStarException("Please enter star for your rating.");
+
 		Movie movie = getMovieByTitle(title);
 
 		List<Rating> ratings = movie.getRating();
-		ratings.add(new Rating(requestDTO.getStar(), requestDTO.getReviewDetails()));
+		ratings.add(new Rating(rating.getStar(), rating.getReviewDetails()));
 		Double average = ratings.stream().mapToDouble(Rating::getStar)
 				.average()
 				.orElse(Double.NaN);

@@ -14,4 +14,10 @@ public class GmdbExceptionHandler {
     public GmdbExceptionResponse handleNotFound(GmdbNotFoundException exception){
         return new GmdbExceptionResponse(exception.getErrorMsg());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(GmdbMissingStarException.class)
+    public GmdbExceptionResponse handleMissingStar(GmdbMissingStarException exception){
+        return new GmdbExceptionResponse(exception.getErrorMsg());
+    }
 }
