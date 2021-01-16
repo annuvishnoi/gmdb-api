@@ -1,27 +1,28 @@
 package com.galvanize.gmdb.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.galvanize.gmdb.exception.GmdbNotFoundException;
+import com.galvanize.gmdb.model.Movie;
+import com.galvanize.gmdb.model.Rating;
+import com.galvanize.gmdb.repository.GmdbRepository;
+import com.galvanize.gmdb.util.MovieTestUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.galvanize.gmdb.exception.GmdbNotFoundException;
-import com.galvanize.gmdb.util.MovieTestUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.galvanize.gmdb.model.Movie;
-import com.galvanize.gmdb.model.Rating;
-import com.galvanize.gmdb.repository.GmdbRepository;
-
+@ExtendWith(MockitoExtension.class)
 public class GmdbServiceTest {
 	
 	private GmdbService gmdbService;
@@ -29,6 +30,9 @@ public class GmdbServiceTest {
 	private GmdbRepository gmdbRepository;
 
 	private List<Movie> allMovies;
+
+	@Captor
+	ArgumentCaptor<Movie> movieArgumentCaptor;
 	
 	@BeforeEach
 	public void setUp() throws IOException {
@@ -76,19 +80,24 @@ public class GmdbServiceTest {
 	@Test
 	public void test_postRating() {
 		Movie supermanMovie = allMovies.get(1);
-		
-		
+		List<Rating> ratings = new ArrayList<>();
+		ratings.add(new Rating(5, "some Review"));
+		supermanMovie.setRating(ratings);
 		when(gmdbRepository.findById(anyString())).thenReturn(Optional.of(supermanMovie));
-		
-		supermanMovie.setRating(new Rating(5, "Awesome Movie"));
-		
+
 		when(gmdbRepository.save(any(Movie.class))).thenReturn(supermanMovie);
 		
-		Movie actualMovie = gmdbService.postRating("SuperMan Returns", new Rating(5, "Awesome"));
+		Movie actualMovie = gmdbService.postRating("SuperMan Returns", new Rating(3, "Awesome"));
 		
-		assertEquals(supermanMovie.getRating(), actualMovie.getRating());
-		
-		
+		assertEquals(supermanMovie, actualMovie);
+
+		verify(gmdbRepository).save(movieArgumentCaptor.capture());
+
+		Movie updatedMovie = movieArgumentCaptor.getValue();
+
+		assertEquals(2 ,
+				updatedMovie.getRating().size());
+		assertEquals(4, updatedMovie.getAverageRating());
 	}
 
 }

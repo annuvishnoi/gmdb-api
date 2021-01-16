@@ -25,8 +25,18 @@ public class GmdbService {
 		return gmdbRepository.findById(title)
 				.orElseThrow(() -> new GmdbNotFoundException(title + " doesn't exist"));
     }
-	public Movie postRating(String string, Rating review) {
-		return new Movie();
-		
+	public Movie postRating(String title, Rating requestDTO) {
+		Movie movie = getMovieByTitle(title);
+
+		List<Rating> ratings = movie.getRating();
+		ratings.add(new Rating(requestDTO.getStar(), requestDTO.getReviewDetails()));
+		Double average = ratings.stream().mapToDouble(Rating::getStar)
+				.average()
+				.orElse(Double.NaN);
+		movie.setAverageRating(average);
+
+		Movie updatedMovie = gmdbRepository.save(movie);
+		updatedMovie.setAverageRating(average);
+		return updatedMovie;
 	}
 }

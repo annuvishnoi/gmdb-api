@@ -1,7 +1,7 @@
 package com.galvanize.gmdb.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Movie {
@@ -11,14 +11,16 @@ public class Movie {
     private String actors;
     private String release;
     private String description;
-    private Rating rating;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Rating> rating;
+    @Transient
+    private Double averageRating;
     
 	public Movie() {
 		super();
 	}
 
-	public Movie(String title, String director, String actors, String release, String description, Rating rating) {
-		super();
+	public Movie(String title, String director, String actors, String release, String description, List<Rating> rating) {
 		this.title = title;
 		this.director = director;
 		this.actors = actors;
@@ -70,12 +72,20 @@ public class Movie {
 		this.description = description;
 	}
 
-	public Rating getRating() {
+	public List<Rating> getRating() {
 		return rating;
 	}
 
-	public void setRating(Rating rating) {
+	public void setRating(List<Rating> rating) {
 		this.rating = rating;
+	}
+
+	public Double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(Double averageRating) {
+		this.averageRating = averageRating;
 	}
 
 	@Override
@@ -133,6 +143,6 @@ public class Movie {
 		return true;
 	}
 
-	
+
 	
 }

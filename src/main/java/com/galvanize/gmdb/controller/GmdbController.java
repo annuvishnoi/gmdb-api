@@ -2,6 +2,7 @@ package com.galvanize.gmdb.controller;
 
 import java.util.List;
 
+import com.galvanize.gmdb.model.Rating;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.galvanize.gmdb.model.GmdbResponse;
 import com.galvanize.gmdb.model.Movie;
-import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.service.GmdbService;
 
 @RestController
@@ -45,8 +45,9 @@ public class GmdbController {
 	
 	
 	@PutMapping("/{title}")
-	public ResponseEntity<GmdbResponse> postRating(@PathVariable String title, @RequestBody Rating review) {
-		GmdbResponse response = new GmdbResponse(gmdbService.postRating(title, review));
+	public ResponseEntity<GmdbResponse> postRating(@PathVariable String title,
+												   @RequestBody Rating rating) {
+		GmdbResponse response = new GmdbResponse(gmdbService.postRating(title, rating));
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

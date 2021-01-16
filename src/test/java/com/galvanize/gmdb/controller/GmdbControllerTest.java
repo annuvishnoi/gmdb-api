@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.galvanize.gmdb.model.Rating;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import com.galvanize.gmdb.model.Movie;
-import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.service.GmdbService;
 import com.galvanize.gmdb.util.MovieTestUtil;
 
@@ -92,17 +91,18 @@ public class GmdbControllerTest {
 	}
 	
 	@Test
-	public void test_PostReview() throws JsonProcessingException, Exception {
-		Rating review = new Rating(4, "Great movie");
-		
+	public void test_PostReview() throws Exception {
+		Rating requestDTO = new Rating(4, "Great movie");
+
 		Movie superManMovie = allMovies.get(1);
+
 		when(gmdbService.postRating(anyString(), any(Rating.class))).thenReturn(superManMovie);
 
 		ObjectMapper mapper = new ObjectMapper();
 
 		mockMvc.perform(put("/api/movies/{title}", "Superman Returns")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(mapper.writeValueAsString(review)))
+						.content(mapper.writeValueAsString(requestDTO)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data").value(superManMovie));
 
