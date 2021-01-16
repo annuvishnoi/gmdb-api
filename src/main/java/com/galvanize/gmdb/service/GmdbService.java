@@ -2,6 +2,7 @@ package com.galvanize.gmdb.service;
 
 import java.util.List;
 
+import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.galvanize.gmdb.model.Movie;
@@ -19,7 +20,8 @@ public class GmdbService {
 		return gmdbRepository.findAll();
 	}
 
-    public Movie getMovieByTitle(String anyString) {
-		return new Movie();
+    public Movie getMovieByTitle(String title) {
+		return gmdbRepository.findById(title)
+				.orElseThrow(() -> new GmdbNotFoundException(title + " doesn't exist"));
     }
 }
