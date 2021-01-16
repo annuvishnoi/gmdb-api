@@ -1,21 +1,26 @@
 package com.galvanize.gmdb.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.gmdb.model.Movie;
 import com.galvanize.gmdb.repository.GmdbRepository;
 
 public class GmdbServiceTest {
+	
+	private String moviePath = "src/test/resources/movies.json";
 	
 	private GmdbService gmdbService;
 	
@@ -33,22 +38,28 @@ public class GmdbServiceTest {
 	}
 	
 	@Test
-	public void test_getMovies_retrunMovieList() {
-		Movie expectedMovie = new Movie("The Incredibles", "Brad Bird");
-		List<Movie> movies = new ArrayList<>();
-		movies.add(expectedMovie);
+	public void test_getMovies_retrunMovieList() throws IOException {
 		
-		when(gmdbRepository.findAll()).thenReturn(movies);
+		List<Movie> expectedMovies = moviesContent();
+		
+		when(gmdbRepository.findAll()).thenReturn(expectedMovies);
 		
 		List<Movie> actualMovies = gmdbService.getMovies();
 		
-		assertEquals(1, actualMovies.size());
+		assertEquals(7, actualMovies.size());
 		
 		Movie actualMovie = actualMovies.get(0);
 		
-		
-		
-		assertEquals(expectedMovie, actualMovie);
+		assertEquals(expectedMovies.get(0), actualMovie);
 	}
 	
+	private List<Movie> moviesContent() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		
+		File moviesFile = new File(moviePath);
+		List<Movie> movies = mapper.readValue(moviesFile, new TypeReference<ArrayList<Movie>>() {});
+		
+		return movies;
+
+	}
 }
