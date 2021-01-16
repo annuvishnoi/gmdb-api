@@ -6,6 +6,7 @@ import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.galvanize.gmdb.model.Movie;
+import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.repository.GmdbRepository;
 
 @Service
@@ -24,4 +25,8 @@ public class GmdbService {
 		return gmdbRepository.findById(title)
 				.orElseThrow(() -> new GmdbNotFoundException(title + " doesn't exist"));
     }
+	public Movie postRating(String string, Rating review) {
+		return new Movie();
+		
+	}
 }

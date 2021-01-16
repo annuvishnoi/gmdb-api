@@ -7,7 +7,7 @@
 | gmdbapp.com/api/movies             | GET         |   204 NO_CONTENT		 | No body in the response   |
 | gmdbapp.com/api/movies/{title}             | GET         |   200 OK		 | Return detail of movie with required title   |
 | gmdbapp.com/api/movies/{title}             | GET         |   404 NOT_FOUND		 | Return error message when movie is not found |
-
+| gmdbapp.com/api/movies/{title}             | PUT         |   200 OK		 | Return the movie detail with rating |
 
 | herobook.com/api/heroes/{heroName}?role={roleName}   | GET         |   200 OK        | Return the details for that hero                    |
 | herobook.com/api/heroes/{heroName}?role={roleName}    | GET         |   400 BAD REQUEST  | Returns error message when hero is not found         |
@@ -32,7 +32,10 @@ Response Body:
     "actors": "Robert Downey Jr., Chris Evans, Mark Ruffalo, Chris Hemsworth",
     "release": "2012",
     "description": "Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from enslaving humanity.",
-    "rating": null
+    "rating": {
+	  "star":4,
+	  "review": "awesome movie. | It's terrible! | I love it."
+	}
   },
   {
     "title": "Superman Returns",

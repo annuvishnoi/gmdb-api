@@ -1,8 +1,11 @@
 package com.galvanize.gmdb.controller;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -10,18 +13,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.galvanize.gmdb.exception.GmdbNotFoundException;
-import com.galvanize.gmdb.repository.GmdbRepository;
-import com.galvanize.gmdb.util.MovieTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import com.galvanize.gmdb.model.Movie;
+import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.service.GmdbService;
+import com.galvanize.gmdb.util.MovieTestUtil;
 
 @WebMvcTest
 public class GmdbControllerTest {
@@ -83,5 +89,22 @@ public class GmdbControllerTest {
 		mockMvc.perform(get("/api/movies/{title}", "Superman Returns"))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.errorMsg").value("Movie doesn't exist."));
+	}
+	
+	@Test
+	public void test_PostReview() throws JsonProcessingException, Exception {
+		Rating review = new Rating(4, "Great movie");
+		
+		Movie superManMovie = allMovies.get(1);
+		when(gmdbService.postRating(anyString(), any(Rating.class))).thenReturn(superManMovie);
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		mockMvc.perform(put("/api/movies/{title}", "Superman Returns")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(mapper.writeValueAsString(review)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data").value(superManMovie));
+
 	}
 }

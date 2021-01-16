@@ -1,7 +1,7 @@
 package com.galvanize.gmdb.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.gmdb.model.Movie;
+import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.repository.GmdbRepository;
 
 public class GmdbServiceTest {
@@ -70,6 +71,24 @@ public class GmdbServiceTest {
 		when(gmdbRepository.findById(anyString())).thenReturn(Optional.empty());
 		assertThrows(GmdbNotFoundException.class,
 				() -> gmdbService.getMovieByTitle("Superman Returns"));
+	}
+	
+	@Test
+	public void test_postRating() {
+		Movie supermanMovie = allMovies.get(1);
+		
+		
+		when(gmdbRepository.findById(anyString())).thenReturn(Optional.of(supermanMovie));
+		
+		supermanMovie.setRating(new Rating(5, "Awesome Movie"));
+		
+		when(gmdbRepository.save(any(Movie.class))).thenReturn(supermanMovie);
+		
+		Movie actualMovie = gmdbService.postRating("SuperMan Returns", new Rating(5, "Awesome"));
+		
+		assertEquals(supermanMovie.getRating(), actualMovie.getRating());
+		
+		
 	}
 
 }

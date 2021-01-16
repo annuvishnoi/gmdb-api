@@ -11,13 +11,13 @@ public class Movie {
     private String actors;
     private String release;
     private String description;
-    private String rating;
+    private Rating rating;
     
 	public Movie() {
 		super();
 	}
 
-	public Movie(String title, String director, String actors, String release, String description, String rating) {
+	public Movie(String title, String director, String actors, String release, String description, Rating rating) {
 		super();
 		this.title = title;
 		this.director = director;
@@ -70,11 +70,11 @@ public class Movie {
 		this.description = description;
 	}
 
-	public String getRating() {
+	public Rating getRating() {
 		return rating;
 	}
 
-	public void setRating(String rating) {
+	public void setRating(Rating rating) {
 		this.rating = rating;
 	}
 
@@ -132,5 +132,7 @@ public class Movie {
 			return false;
 		return true;
 	}
+
+	
 	
 }
