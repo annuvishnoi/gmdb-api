@@ -57,5 +57,21 @@ public class GmdbControllerIT {
                 .andExpect(jsonPath("$.data[0]").value(movie1));
     }
 
+    @Test
+    public void test_getMovieByTitle_return200_withMovieDetail() throws Exception {
+        gmdbRepository.saveAll(allMovies);
+        mockMvc.perform(get("/api/movies/{title}", "Superman Returns"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(allMovies.get(1)));
+    }
+
+    @Test
+    public void test_getMovieByTitle_return404withMessage_whenNoMovie() throws Exception {
+        gmdbRepository.saveAll(allMovies);
+        mockMvc.perform(get("/api/movies/{title}", "Superman Again"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMsg")
+                                .value("Superman Again doesn't exist"));
+    }
 
 }
