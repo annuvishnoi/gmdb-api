@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.galvanize.gmdb.exception.GmdbNotFoundException;
 import com.galvanize.gmdb.repository.GmdbRepository;
 import com.galvanize.gmdb.util.MovieTestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,5 +77,11 @@ public class GmdbControllerTest {
 		verify(gmdbService).getMovieByTitle("Superman Returns");
 	}
 
-	//TODO: continue to test 404 scenario after lunch
+	@Test
+	public void test_getMovieByTitle_return404withMessage_whenNoMovie() throws Exception {
+		doThrow(new GmdbNotFoundException("Movie doesn't exist.")).when(gmdbService).getMovieByTitle(anyString());
+		mockMvc.perform(get("/api/movies/{title}", "Superman Returns"))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.errorMsg").value("Movie doesn't exist."));
+	}
 }
