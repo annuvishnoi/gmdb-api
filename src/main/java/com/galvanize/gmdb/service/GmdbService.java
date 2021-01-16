@@ -1,14 +1,13 @@
 package com.galvanize.gmdb.service;
 
-import java.util.List;
-
 import com.galvanize.gmdb.exception.GmdbMissingStarException;
 import com.galvanize.gmdb.exception.GmdbNotFoundException;
-import org.springframework.stereotype.Service;
-
 import com.galvanize.gmdb.model.Movie;
 import com.galvanize.gmdb.model.Rating;
 import com.galvanize.gmdb.repository.GmdbRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class GmdbService {
