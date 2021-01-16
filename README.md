@@ -4,6 +4,11 @@
 | URI                                                | HTTP Method |   HTTP Status   | Description                                           |
 |----------------------------------------------------|-------------|-----------------|-------------------------------------------------------|
 | gmdbapp.com/api/movies             | GET         |   200 OK		 | Return the list of all movies   |
+| gmdbapp.com/api/movies             | GET         |   204 NO_CONTENT		 | No body in the response   |
+| gmdbapp.com/api/movies/{title}             | GET         |   200 OK		 | Return detail of movie with required title   |
+| gmdbapp.com/api/movies/{title}             | GET         |   404 NOT_FOUND		 | Return error message when movie is not found |
+
+
 | herobook.com/api/heroes/{heroName}?role={roleName}   | GET         |   200 OK        | Return the details for that hero                    |
 | herobook.com/api/heroes/{heroName}?role={roleName}    | GET         |   400 BAD REQUEST  | Returns error message when hero is not found         |
 | herobook.com/api/villains?role={roleName}               | GET         |   200 OK		 | Return the list of name of villains when role is visitor   |

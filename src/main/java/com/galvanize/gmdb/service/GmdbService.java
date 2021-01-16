@@ -19,4 +19,7 @@ public class GmdbService {
 		return gmdbRepository.findAll();
 	}
 
+    public Movie getMovieByTitle(String anyString) {
+		return new Movie();
+    }
 }

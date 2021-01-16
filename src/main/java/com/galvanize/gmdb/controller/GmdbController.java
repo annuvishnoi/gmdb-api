@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,12 @@ public class GmdbController {
 		} else {
 			return new ResponseEntity<>(new GmdbResponse(movies), HttpStatus.OK);
 		}
+	}
+
+	@GetMapping("/{title}")
+	public ResponseEntity<GmdbResponse> getMovieByTitle(@PathVariable String title) {
+		GmdbResponse response = new GmdbResponse(gmdbService.getMovieByTitle(title));
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 }

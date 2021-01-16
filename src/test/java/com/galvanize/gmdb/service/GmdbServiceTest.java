@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.galvanize.gmdb.util.MovieTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,16 +21,17 @@ import com.galvanize.gmdb.repository.GmdbRepository;
 
 public class GmdbServiceTest {
 	
-	private String moviePath = "src/test/resources/movies.json";
-	
 	private GmdbService gmdbService;
 	
 	private GmdbRepository gmdbRepository;
+
+	private List<Movie> allMovies;
 	
 	@BeforeEach
-	public void setUp() {
+	public void setUp() throws IOException {
 		gmdbRepository = mock(GmdbRepository.class);
 		gmdbService = new GmdbService(gmdbRepository);
+		allMovies = MovieTestUtil.moviesContent();
 	}
 	
 	@Test
@@ -40,9 +42,7 @@ public class GmdbServiceTest {
 	@Test
 	public void test_getMovies_retrunMovieList() throws IOException {
 		
-		List<Movie> expectedMovies = moviesContent();
-		
-		when(gmdbRepository.findAll()).thenReturn(expectedMovies);
+		when(gmdbRepository.findAll()).thenReturn(allMovies);
 		
 		List<Movie> actualMovies = gmdbService.getMovies();
 		
@@ -50,16 +50,7 @@ public class GmdbServiceTest {
 		
 		Movie actualMovie = actualMovies.get(0);
 		
-		assertEquals(expectedMovies.get(0), actualMovie);
+		assertEquals(allMovies.get(0), actualMovie);
 	}
-	
-	private List<Movie> moviesContent() throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		
-		File moviesFile = new File(moviePath);
-		List<Movie> movies = mapper.readValue(moviesFile, new TypeReference<ArrayList<Movie>>() {});
-		
-		return movies;
 
-	}
 }

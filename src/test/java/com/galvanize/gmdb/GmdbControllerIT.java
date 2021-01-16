@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.gmdb.model.Movie;
 import com.galvanize.gmdb.repository.GmdbRepository;
+import com.galvanize.gmdb.util.MovieTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,12 @@ public class GmdbControllerIT {
     @Autowired
     GmdbRepository gmdbRepository;
 
-    private String moviePath = "src/test/resources/movies.json";
+    private List<Movie> allMovies;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         gmdbRepository.deleteAll();
+        allMovies = MovieTestUtil.moviesContent();
     }
 
     @Test
@@ -47,7 +49,6 @@ public class GmdbControllerIT {
 
     @Test
     public void test_getmovies_return200_withDetails() throws Exception {
-        List<Movie> allMovies = moviesContent();
         Movie movie1 = allMovies.get(0);
         gmdbRepository.saveAll(allMovies);
         mockMvc.perform(get("/api/movies"))
@@ -56,13 +57,5 @@ public class GmdbControllerIT {
                 .andExpect(jsonPath("$.data[0]").value(movie1));
     }
 
-    private List<Movie> moviesContent() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
 
-        File moviesFile = new File(moviePath);
-        List<Movie> movies = mapper.readValue(moviesFile, new TypeReference<ArrayList<Movie>>() {});
-
-        return movies;
-
-    }
 }
