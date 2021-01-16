@@ -1,6 +1,11 @@
 package com.galvanize.gmdb.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Movie {
+	@Id
 	private String title;
     private String director;
     private String actors;

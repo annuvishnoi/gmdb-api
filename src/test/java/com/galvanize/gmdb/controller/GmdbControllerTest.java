@@ -29,7 +29,7 @@ public class GmdbControllerTest {
 	private GmdbService gmdbService; 
 	
 	@Test
-	public void test_getmovies_return204_when_no_movies() throws Exception {
+	public void test_getmovies_return204_whenNoMovies() throws Exception {
 		
 		mockMvc.perform(
 				get("/api/movies")

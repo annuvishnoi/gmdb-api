@@ -1,14 +1,10 @@
 package com.galvanize.gmdb.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.galvanize.gmdb.model.Movie;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public class GmdbRepository {
-
-	public List<Movie> findAll() {
-		return new ArrayList<>();
-	}
+@Repository
+public interface GmdbRepository extends JpaRepository<Movie, String> {
 
 }
